@@ -1,0 +1,19 @@
+{
+  "name": "@yoroi-classic/cardano-serialization-lib-nodejs",
+  "description": "(De)serialization functions for the Cardano blockchain along with related utility functions",
+  "version": "9.1.3",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoroi-classic/cardano-serialization-lib.git"
+  },
+  "files": [
+    "cardano_serialization_lib_bg.wasm",
+    "cardano_serialization_lib.js",
+    "cardano_serialization_lib.d.ts",
+    "cardano_serialization_lib.js.flow"
+  ],
+  "main": "cardano_serialization_lib.js",
+  "types": "cardano_serialization_lib.d.ts",
+  "author": "Yoroi Classic"
+}
