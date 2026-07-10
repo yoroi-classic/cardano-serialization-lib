@@ -3,7 +3,7 @@
   "version": "15.0.3",
   "private": true,
   "description": "Superseded Yoroi Classic Cardano Serialization Lib fork; migrate to dcSpark cardano-multiplatform-lib packages",
-  "deprecated": "This Yoroi Classic CSL fork is superseded. Use @dcspark/cardano-multiplatform-lib-nodejs, @dcspark/cardano-multiplatform-lib-browser, or @dcspark/cardano-multiplatform-lib-asmjs instead.",
+  "deprecated": "This Yoroi Classic CSL fork is superseded. Use @dcspark/cardano-multiplatform-lib-nodejs or @dcspark/cardano-multiplatform-lib-browser; use the strongly discouraged ASM.js package only when unavoidable.",
   "scripts": {
     "publish-all:prod": "node scripts/build-helper.js publish-all --env prod",
     "publish-all:beta": "node scripts/build-helper.js publish-all --env beta",

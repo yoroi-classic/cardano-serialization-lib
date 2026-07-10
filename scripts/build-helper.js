@@ -20,7 +20,7 @@ const legacyPublishDisabledMessage = [
   'This fork is superseded by dcSpark cardano-multiplatform-lib.',
   'Move consumers to @dcspark/cardano-multiplatform-lib-nodejs,',
   '@dcspark/cardano-multiplatform-lib-browser, or',
-  '@dcspark/cardano-multiplatform-lib-asmjs when ASM.js is required.',
+  '@dcspark/cardano-multiplatform-lib-asmjs only when ASM.js is unavoidable.',
 ].join('\n');
 
 function stopLegacyPublish() {
@@ -64,30 +64,8 @@ program
 program
   .command('publish')
   .description('Deprecated: legacy CSL package publishing is disabled')
-  .requiredOption('-t, --target <target>', 'Target platform (nodejs|browser|web)', (value) => {
-    if (!['nodejs', 'browser', 'web'].includes(value)) {
-      throw new Error('Target must be: nodejs, browser, or web');
-    }
-    return value;
-  })
-  .requiredOption('-v, --variant <variant>', 'Build variant (normal|inlined|asm)', (value) => {
-    if (!['normal', 'inlined', 'asm'].includes(value)) {
-      throw new Error('Variant must be: normal, inlined, or asm');
-    }
-    return value;
-  })
-  .requiredOption('-g, --gc <gc>', 'Enable garbage collection (true|false)', (value) => {
-    if (value !== 'true' && value !== 'false') {
-      throw new Error('GC must be: true or false');
-    }
-    return value === 'true';
-  })
-  .requiredOption('-e, --env <env>', 'Environment (prod|beta)', (value) => {
-    if (!['prod', 'beta'].includes(value)) {
-      throw new Error('Environment must be: prod or beta');
-    }
-    return value;
-  })
+  .allowUnknownOption(true)
+  .allowExcessArguments(true)
   .action(() => {
     stopLegacyPublish();
   });
@@ -96,12 +74,8 @@ program
 program
   .command('publish-all')
   .description('Deprecated: legacy CSL package publishing is disabled')
-  .requiredOption('-e, --env <env>', 'Environment (prod|beta)', (value) => {
-    if (!['prod', 'beta'].includes(value)) {
-      throw new Error('Environment must be: prod or beta');
-    }
-    return value;
-  })
+  .allowUnknownOption(true)
+  .allowExcessArguments(true)
   .action(() => {
     stopLegacyPublish();
   });
