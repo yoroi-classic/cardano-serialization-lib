@@ -113,12 +113,23 @@ To publish a new version to [crates.io](https://crates.io)
 
 .. _Crates package: https://crates.io/crates/cardano-serialization-lib
 
-To publish new versions to NPM (only needed if you are an admin of this project)
+JavaScript packages are not published to npmjs. Generated JavaScript
+package metadata points at GitHub Packages under the ``@yoroi-classic``
+scope. Admins publishing owned packages should authenticate npm to
+``https://npm.pkg.github.com`` and use the owned publish scripts.
+
+To publish all owned JavaScript package variants and the Rust crate:
 ::
 
-   npm run js:publish-nodejs
-   npm run js:publish-browser
-   npm run js:publish-asm
+   npm run publish-all:prod
+
+To publish a single owned JavaScript package variant:
+::
+
+   npm run js:publish-nodejs:prod:no-gc
+   npm run js:publish-browser:prod:no-gc
+   npm run js:publish-browser-inlined:prod:no-gc
+   npm run js:publish-asm:prod:no-gc
 
 .. _React-Native mobile bindings: https://github.com/yoroi-classic/csl-mobile-bridge
 .. _Typescript: https://www.typescriptlang.org/

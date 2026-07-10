@@ -36,6 +36,26 @@ function assertOwnedMetadata(pkg, expectedName) {
 }
 
 try {
+  assert.throws(
+    () => runHelper([]),
+    /Unsupported package suffix: <missing>/
+  );
+
+  assert.throws(
+    () => runHelper(['-bad']),
+    /Unsupported package suffix: -bad/
+  );
+
+  assert.throws(
+    () => runHelper(['-nodejs', '-bad']),
+    /Unsupported optional package suffix: -bad/
+  );
+
+  assert.throws(
+    () => runHelper(['-nodejs', '-gc', '-extra']),
+    /Unexpected publish helper arguments: -extra/
+  );
+
   assertOwnedMetadata(
     runHelper(['-nodejs']),
     '@yoroi-classic/cardano-serialization-lib-nodejs'
