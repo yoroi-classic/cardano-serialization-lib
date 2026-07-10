@@ -1,7 +1,9 @@
 {
   "name": "cardano-serialization-lib",
   "version": "15.0.3",
-  "description": "(De)serialization functions for the Cardano blockchain along with related utility functions",
+  "private": true,
+  "description": "Superseded Yoroi Classic Cardano Serialization Lib fork; migrate to dcSpark cardano-multiplatform-lib packages",
+  "deprecated": "This Yoroi Classic CSL fork is superseded. Use @dcspark/cardano-multiplatform-lib-nodejs, @dcspark/cardano-multiplatform-lib-browser, or @dcspark/cardano-multiplatform-lib-asmjs instead.",
   "scripts": {
     "publish-all:prod": "node scripts/build-helper.js publish-all --env prod",
     "publish-all:beta": "node scripts/build-helper.js publish-all --env beta",
@@ -45,7 +47,7 @@
     "js:publish-asm:prod:gc": "node scripts/build-helper.js publish --target browser --variant asm --gc true --env prod",
     "js:publish-asm:beta:gc": "node scripts/build-helper.js publish --target browser --variant asm --gc true --env beta",
 
-    "rust:publish": "cd rust && cargo publish && cd ../",
+    "rust:publish": "node scripts/build-helper.js publish-disabled",
     "asm:build": "./binaryen/bin/wasm2js ./rust/pkg/cardano_serialization_lib_bg.wasm --output ./rust/pkg/cardano_serialization_lib.asm.js && node ./scripts/wasm-to-asm && node ./scripts/fix-buffer-ref.js",
     "rust:check-warnings": "(cd rust; RUSTFLAGS=\"-D warnings\" cargo +stable build)",
     "rust:test": "(cd rust; cargo +nightly test --all-features --all-targets)",
