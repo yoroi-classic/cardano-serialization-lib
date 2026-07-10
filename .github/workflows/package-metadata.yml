@@ -1,0 +1,29 @@
+name: Package Metadata
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/package-metadata.yml'
+      - 'package.json'
+      - 'scripts/build-helper.js'
+      - 'scripts/publish-helper.js'
+      - 'scripts/publish-helper.test.js'
+
+permissions:
+  contents: read
+
+jobs:
+  publish-helper:
+    name: publish-helper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Test generated package metadata
+        run: node scripts/publish-helper.test.js

@@ -11,12 +11,15 @@ How can I use this library
 Rust is wonderfully portable! You can easily bind to the native Rust
 library from any common programming language (even C and WebAssembly)!
 
-NPM packages
-''''''''''''
+JavaScript packages
+'''''''''''''''''''
 
--  `NodeJS WASM package`_
--  `Browser (chrome/firefox) WASM package`_
--  `Browser (pure JS - no WASM) ASM.js package`_
+-  ``@yoroi-classic/cardano-serialization-lib-nodejs``
+-  ``@yoroi-classic/cardano-serialization-lib-browser``
+-  ``@yoroi-classic/cardano-serialization-lib-asmjs``
+
+These package names are generated from this repository for owned Git refs
+or owned package registries. Do not publish them to npmjs.
 
 Mobile bindings
 '''''''''''''''
@@ -28,9 +31,9 @@ Benefits of using this library
 
 Serialization/deserialization code is automatically generated from
 Cardano’s official specification, which guarantees it can easily stay up
-to date! We do this using an EMURGO-written tool called `cddl-codegen`_
-which can be re-used for other tasks such as automatically generate a
-Rust library for Cardano metadata specifications!
+to date! The same code-generation approach can be re-used for other tasks
+such as automatically generating a Rust library for Cardano metadata
+specifications.
 
 It is also very easy to create scripts in Rust or WASM to share with
 stake pools, or even embed inside an online tool! No more crazy
@@ -56,7 +59,6 @@ If you are looking for legacy bindings, you can find them at the
 following:
 
 -  `Byron WASM bindings`_
--  `Jormungandr WASM bindings`_
 
 Original binary specifications
 ------------------------------
@@ -118,16 +120,11 @@ To publish new versions to NPM (only needed if you are an admin of this project)
    npm run js:publish-browser
    npm run js:publish-asm
 
-.. _NodeJS WASM package: https://www.npmjs.com/package/@emurgo/cardano-serialization-lib-nodejs
-.. _Browser (chrome/firefox) WASM package: https://www.npmjs.com/package/@emurgo/cardano-serialization-lib-browser
-.. _Browser (pure JS - no WASM) ASM.js package: https://www.npmjs.com/package/@emurgo/cardano-serialization-lib-asmjs
-.. _React-Native mobile bindings: https://github.com/Emurgo/react-native-haskell-shelley
-.. _cddl-codegen: https://github.com/Emurgo/cddl-codegen
+.. _React-Native mobile bindings: https://github.com/yoroi-classic/csl-mobile-bridge
 .. _Typescript: https://www.typescriptlang.org/
 .. _Flow: https://flow.org/
 .. _here: /rust/pkg/cardano_serialization_lib.js.flow
 .. _example: /example
 .. _Byron WASM bindings: https://github.com/input-output-hk/js-cardano-wasm/tree/master/cardano-wallet
-.. _Jormungandr WASM bindings: https://github.com/emurgo/js-chain-libs
 .. _CDDL: http://cbor.io/tools.html
 .. _link: https://github.com/input-output-hk/cardano-ledger-specs/tree/master/byron/cddl-spec

@@ -23,7 +23,7 @@ if rtd_version not in ["stable", "latest"]:
 
 project = 'cardano-serialization-lib Documentation'
 copyright = '2020, EMURGO'
-author = 'EMURGO'
+author = 'yoroi-classic contributors'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'
@@ -98,7 +98,7 @@ html_logo = ".sphinx/cardano-logo.png"
 
 html_context = {
   "display_github": True, # Add 'Edit on Github' link instead of 'View page source'
-  "github_user": "Emurgo",
+  "github_user": "yoroi-classic",
   "github_repo": "cardano-serialization-lib",
   "github_version": "master",
   "conf_py_path": "/",
