@@ -2,7 +2,7 @@
 name = "cardano-serialization-lib-json-schema-gen"
 version = "0.0.1"
 edition = "2018"
-authors = ["EMURGO"]
+authors = ["yoroi-classic contributors"]
 license = "MIT"
 
 

@@ -146,9 +146,10 @@ function buildRust(target, variant, gc) {
   run('npm run js:flowgen', 'Generating Flow types');
 }
 
-function checkVersionExists(packageName, version) {
+function checkVersionExists(packageName, version, registry) {
   try {
-    const result = execSync(`npm view ${packageName}@${version} version 2>/dev/null`, { 
+    const registryArg = registry ? ` --registry=${registry}` : '';
+    const result = execSync(`npm view ${packageName}@${version} version${registryArg} 2>/dev/null`, {
       encoding: 'utf8', 
       stdio: 'pipe' 
     });
@@ -164,7 +165,8 @@ function getPackageInfo(packageJsonPath) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     return {
       name: packageJson.name,
-      version: packageJson.version
+      version: packageJson.version,
+      registry: packageJson.publishConfig?.registry
     };
   } catch (error) {
     console.error(`❌ Failed to read package.json from ${packageJsonPath}`);
@@ -202,14 +204,15 @@ function handlePackagePublish(config, env, options = {}) {
   let skipPublish = false;
   const packageInfo = getPackageInfo('./publish/package.json');
   if (packageInfo) {
-    console.log(`\n🔍 Checking if ${packageInfo.name}@${packageInfo.version} already exists...`);
+    const registryLabel = packageInfo.registry || 'default npm registry';
+    console.log(`\n🔍 Checking if ${packageInfo.name}@${packageInfo.version} already exists in ${registryLabel}...`);
     
-    if (checkVersionExists(packageInfo.name, packageInfo.version)) {
+    if (checkVersionExists(packageInfo.name, packageInfo.version, packageInfo.registry)) {
       if (dryRun) {
-        console.log(`\n⚠️  Package ${packageInfo.name}@${packageInfo.version} already exists on npm.`);
+        console.log(`\n⚠️  Package ${packageInfo.name}@${packageInfo.version} already exists in ${registryLabel}.`);
         console.log(`   In a real publish, this would require a version bump.`);
       } else {
-        console.log(`\n⚠️  WARNING: Package ${packageInfo.name}@${packageInfo.version} already exists on npm!`);
+        console.log(`\n⚠️  WARNING: Package ${packageInfo.name}@${packageInfo.version} already exists in ${registryLabel}!`);
         console.log(`   Please bump the version in package.json before publishing.`);
         console.log(`\n❌ Publish will be skipped.`);
         skipPublish = true;
@@ -226,10 +229,10 @@ function handlePackagePublish(config, env, options = {}) {
 
   // Publish or test publish
   if (dryRun) {
-    run(`cd publish && npm publish ${publishTag} --access public --dry-run`, `Testing publish to npm${env === 'beta' ? ' (beta)' : ''} (dry-run)`);
+    run(`cd publish && npm publish ${publishTag} --access public --dry-run`, `Testing package publish${env === 'beta' ? ' (beta)' : ''} (dry-run)`);
     run(`cd publish && npm pack`, 'Creating package tarball');
   } else {
-    run(`cd publish && npm publish ${publishTag} --access public`, `Publishing to npm${env === 'beta' ? ' (beta)' : ''}`);
+    run(`cd publish && npm publish ${publishTag} --access public`, `Publishing package${env === 'beta' ? ' (beta)' : ''}`);
   }
 }
 
@@ -319,4 +322,4 @@ function testPublishAllPackages(env) {
 }
 
 // Parse arguments and execute commands
-program.parse(process.argv); 
+program.parse(process.argv);
