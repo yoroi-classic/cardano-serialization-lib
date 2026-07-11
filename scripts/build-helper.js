@@ -3,10 +3,9 @@
 /**
  * Cardano Serialization Library Build Helper
  * 
- * Supports multiple actions:
+ * Supports local compatibility actions:
  * - build: Build for specific target/variant
- * - publish: Build and publish a single package  
- * - publish-all: Run tests + build and publish ALL packages + publish Rust crate
+ * - test-publish: Dry-run the legacy publishing pipeline
  * 
  * All parameters are REQUIRED - no defaults provided to prevent accidental builds.
  */
@@ -16,10 +15,22 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 
 const program = new Command();
+const legacyPublishDisabledMessage = [
+  'Legacy Yoroi Classic CSL publishing is disabled.',
+  'This fork is superseded by dcSpark cardano-multiplatform-lib.',
+  'Move consumers to @dcspark/cardano-multiplatform-lib-nodejs,',
+  '@dcspark/cardano-multiplatform-lib-browser, or',
+  '@dcspark/cardano-multiplatform-lib-asmjs only when ASM.js is unavoidable.',
+].join('\n');
+
+function stopLegacyPublish() {
+  console.error(`\n${legacyPublishDisabledMessage}`);
+  process.exit(1);
+}
 
 program
   .name('build-helper')
-  .description('Cardano Serialization Library Build Helper\n\nExamples:\n  build-helper build --target browser --variant normal --gc false\n  build-helper publish --target nodejs --variant normal --gc true --env beta\n  build-helper publish-all --env prod')
+  .description('Cardano Serialization Library Build Helper\n\nExamples:\n  build-helper build --target browser --variant normal --gc false\n  build-helper test-publish --env beta')
   .version('1.0.0');
 
 // Build command
@@ -52,49 +63,29 @@ program
 // Publish command  
 program
   .command('publish')
-  .description('Build and publish a single package\n\nExample: publish --target nodejs --variant normal --gc true --env beta')
-  .requiredOption('-t, --target <target>', 'Target platform (nodejs|browser|web)', (value) => {
-    if (!['nodejs', 'browser', 'web'].includes(value)) {
-      throw new Error('Target must be: nodejs, browser, or web');
-    }
-    return value;
-  })
-  .requiredOption('-v, --variant <variant>', 'Build variant (normal|inlined|asm)', (value) => {
-    if (!['normal', 'inlined', 'asm'].includes(value)) {
-      throw new Error('Variant must be: normal, inlined, or asm');
-    }
-    return value;
-  })
-  .requiredOption('-g, --gc <gc>', 'Enable garbage collection (true|false)', (value) => {
-    if (value !== 'true' && value !== 'false') {
-      throw new Error('GC must be: true or false');
-    }
-    return value === 'true';
-  })
-  .requiredOption('-e, --env <env>', 'Environment (prod|beta)', (value) => {
-    if (!['prod', 'beta'].includes(value)) {
-      throw new Error('Environment must be: prod or beta');
-    }
-    return value;
-  })
-  .action((options) => {
-    const config = { target: options.target, variant: options.variant, gc: options.gc };
-    handlePackagePublish(config, options.env, { runTests: true });
-    console.log(`\n✅ Publish completed successfully!`);
+  .description('Deprecated: legacy CSL package publishing is disabled')
+  .allowUnknownOption(true)
+  .allowExcessArguments(true)
+  .action(() => {
+    stopLegacyPublish();
   });
 
 // Publish-all command
 program
   .command('publish-all')
-  .description('Run tests + build and publish ALL packages + publish Rust crate\n\nBuilds all 10 variants: nodejs/browser/web × normal/inlined/asm × gc/no-gc\n\nExample: publish-all --env prod')
-  .requiredOption('-e, --env <env>', 'Environment (prod|beta)', (value) => {
-    if (!['prod', 'beta'].includes(value)) {
-      throw new Error('Environment must be: prod or beta');
-    }
-    return value;
-  })
-  .action((options) => {
-    publishAllPackages(options.env);
+  .description('Deprecated: legacy CSL package publishing is disabled')
+  .allowUnknownOption(true)
+  .allowExcessArguments(true)
+  .action(() => {
+    stopLegacyPublish();
+  });
+
+// Shared disabled command for legacy package scripts that used to publish directly.
+program
+  .command('publish-disabled')
+  .description('Explain why legacy CSL publishing is disabled')
+  .action(() => {
+    stopLegacyPublish();
   });
 
 // Test-publish command
@@ -313,7 +304,7 @@ function publishAllPackages(env, dryRun = false) {
   
   console.log(`\n🎉 Full ${workflowType} workflow completed!`);
   if (dryRun) {
-    console.log(`\n💡 This was a test run. To actually publish, use: build-helper publish-all --env ${env}`);
+    console.log(`\nActual legacy CSL publishing is disabled. Move consumers to dcSpark cardano-multiplatform-lib packages instead.`);
   }
 }
 

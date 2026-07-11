@@ -1,3 +1,7 @@
+echo "Legacy Yoroi Classic CSL publishing is disabled."
+echo "This fork is superseded by dcSpark cardano-multiplatform-lib packages."
+return 1 2>/dev/null || exit 1
+
 if [ $1 = "prod" ];
 then RELEASE_TYPE="prod"
 elif [ $1 = "beta" ];
