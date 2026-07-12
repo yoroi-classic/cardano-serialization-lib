@@ -28,6 +28,12 @@ function stopLegacyPublish() {
   process.exit(1);
 }
 
+function assertDryRunPublish(dryRun) {
+  if (!dryRun) {
+    throw new Error(legacyPublishDisabledMessage);
+  }
+}
+
 program
   .name('build-helper')
   .description('Cardano Serialization Library Build Helper\n\nExamples:\n  build-helper build --target browser --variant normal --gc false\n  build-helper test-publish --env beta')
@@ -167,6 +173,8 @@ function getPackageInfo(packageJsonPath) {
 
 function handlePackagePublish(config, env, options = {}) {
   const { dryRun = false, runTests = false } = options;
+  assertDryRunPublish(dryRun);
+
   const { target, variant, gc } = config;
   const publishTag = env === 'beta' ? '--tag beta' : '';
   
@@ -222,12 +230,12 @@ function handlePackagePublish(config, env, options = {}) {
   if (dryRun) {
     run(`cd publish && npm publish ${publishTag} --access public --dry-run`, `Testing package publish${env === 'beta' ? ' (beta)' : ''} (dry-run)`);
     run(`cd publish && npm pack`, 'Creating package tarball');
-  } else {
-    run(`cd publish && npm publish ${publishTag} --access public`, `Publishing package${env === 'beta' ? ' (beta)' : ''}`);
   }
 }
 
 function publishAllPackages(env, dryRun = false) {
+  assertDryRunPublish(dryRun);
+
   const workflowType = dryRun ? 'test publish' : 'publish';
   console.log(`\n🚀 Starting full ${workflowType} workflow for ${env} environment...\n`);
   
@@ -276,8 +284,6 @@ function publishAllPackages(env, dryRun = false) {
   try {
     if (dryRun) {
       run('cd rust && cargo publish --dry-run --allow-dirty', 'Testing Rust crate publish (dry-run)');
-    } else {
-      run('cd rust && cargo publish --allow-dirty', 'Publishing Rust crate to crates.io');
     }
     console.log(`✅ Successfully ${dryRun ? 'tested' : 'published'} Rust crate`);
     results.push({ config: 'rust-crate', status: 'success' });
@@ -312,5 +318,12 @@ function testPublishAllPackages(env) {
   publishAllPackages(env, true);
 }
 
-// Parse arguments and execute commands
-program.parse(process.argv);
+if (require.main === module) {
+  program.parse(process.argv);
+}
+
+module.exports = {
+  handlePackagePublish,
+  legacyPublishDisabledMessage,
+  publishAllPackages,
+};

@@ -6,6 +6,7 @@ on:
       - '.github/workflows/package-metadata.yml'
       - 'package.json'
       - 'scripts/build-helper.js'
+      - 'scripts/build-helper.test.js'
       - 'scripts/publish-helper.js'
       - 'scripts/publish-helper.test.js'
 
