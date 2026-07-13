@@ -21,6 +21,17 @@ Keep any already pushed Yoroi Classic compatibility refs only as a temporary
 bridge while downstream consumers migrate. Do not publish new
 `@yoroi-classic/cardano-serialization-lib-*` packages to npm.
 
+### Downstream CML migration tracking
+
+Use the downstream issues below to move consumers to CML. Avoid adding new
+consumers to this fork unless a temporary compatibility bridge is explicitly
+needed for one of those migrations.
+
+- Extension: https://github.com/yoroi-classic/yoroi-frontend/issues/15
+- Mobile: https://github.com/yoroi-classic/yoroi/issues/14
+- Backend: https://github.com/yoroi-classic/yoroi-graphql-migration-backend/issues/4
+- Trezor flow package: https://github.com/yoroi-classic/trezor-connect-flow/issues/2
+
 This is a library, written in Rust, for serialization & deserialization of data structures used in Cardano's Haskell implementation of Alonzo along with useful utility functions.
 
 ##### JavaScript packages
