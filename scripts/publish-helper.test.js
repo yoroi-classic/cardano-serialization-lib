@@ -4,7 +4,7 @@ const path = require('path');
 
 const rootDir = path.resolve(__dirname, '..');
 const publishDir = path.join(rootDir, 'publish');
-const { configurePackage } = require('./publish-helper');
+const { configurePackage, packageDeprecatedMessage } = require('./publish-helper');
 
 const basePackage = {
   name: 'cardano-serialization-lib',
@@ -29,6 +29,7 @@ function assertOwnedMetadata(pkg, expectedName) {
     url: 'git+https://github.com/yoroi-classic/cardano-serialization-lib.git',
   });
   assert.strictEqual(pkg.author, 'yoroi-classic contributors');
+  assert.strictEqual(pkg.deprecated, packageDeprecatedMessage);
   assert.deepStrictEqual(pkg.publishConfig, {
     registry: 'https://npm.pkg.github.com',
   });

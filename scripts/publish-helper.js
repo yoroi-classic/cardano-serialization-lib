@@ -3,6 +3,7 @@ const fs = require('fs');
 const packageScope = '@yoroi-classic';
 const packageRepository = 'git+https://github.com/yoroi-classic/cardano-serialization-lib.git';
 const packageRegistry = 'https://npm.pkg.github.com';
+const packageDeprecatedMessage = 'This Yoroi Classic CSL fork is superseded. Use @dcspark/cardano-multiplatform-lib-nodejs or @dcspark/cardano-multiplatform-lib-browser; use @dcspark/cardano-multiplatform-lib-asmjs only when unavoidable because dcSpark strongly discourages ASM.js.';
 const supportedPackageSuffixes = new Set([
   '-nodejs',
   '-browser',
@@ -83,6 +84,7 @@ function configurePackage(oldPkg, args) {
   };
   oldPkg.author = "yoroi-classic contributors";
   oldPkg.license = "MIT";
+  oldPkg.deprecated = packageDeprecatedMessage;
   oldPkg.publishConfig = {
     registry: packageRegistry
   };
@@ -99,5 +101,6 @@ if (require.main === module) {
 
 module.exports = {
   configurePackage,
+  packageDeprecatedMessage,
   validatePackageArgs,
 };
