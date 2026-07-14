@@ -5,10 +5,12 @@ on:
     paths:
       - '.github/workflows/package-metadata.yml'
       - 'package.json'
+      - 'README.md'
       - 'scripts/build-helper.js'
       - 'scripts/build-helper.test.js'
       - 'scripts/publish-helper.js'
       - 'scripts/publish-helper.test.js'
+      - 'scripts/superseded-fork-check.js'
 
 permissions:
   contents: read
@@ -28,6 +30,9 @@ jobs:
 
       - name: Install test dependencies
         run: npm ci --ignore-scripts
+
+      - name: Guard superseded fork metadata
+        run: npm run test:superseded-fork
 
       - name: Test generated package metadata
         run: npm run test:publish-helper

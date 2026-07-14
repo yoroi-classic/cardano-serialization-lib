@@ -5,6 +5,7 @@
 This Yoroi Classic fork is no longer the long-term dependency target. New work
 should use dcSpark Cardano Multiplatform Lib instead:
 
+- https://github.com/dcSpark/cardano-multiplatform-lib
 - `@dcspark/cardano-multiplatform-lib-nodejs`
 - `@dcspark/cardano-multiplatform-lib-browser`
 - `@dcspark/cardano-multiplatform-lib-asmjs` only when ASM.js support is unavoidable
@@ -20,6 +21,8 @@ WASM.
 Keep any already pushed Yoroi Classic compatibility refs only as a temporary
 bridge while downstream consumers migrate. Do not publish new
 `@yoroi-classic/cardano-serialization-lib-*` packages to npm.
+
+Tracking issue: https://github.com/yoroi-classic/cardano-serialization-lib/issues/3
 
 ### Downstream CML migration tracking
 
