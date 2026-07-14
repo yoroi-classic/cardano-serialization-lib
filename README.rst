@@ -1,6 +1,13 @@
 Cardano Serialization Lib
 =========================
 
+.. warning::
+
+   This Yoroi Classic fork is superseded by dcSpark Cardano Multiplatform
+   Lib. New work should target
+   https://github.com/dcSpark/cardano-multiplatform-lib instead of new
+   ``@yoroi-classic/cardano-serialization-lib-*`` package publishing.
+
 This is a library for serialization & deserialization of data structures
 used in Cardano’s Haskell implementation of Alonzo along with useful
 utility functions.
