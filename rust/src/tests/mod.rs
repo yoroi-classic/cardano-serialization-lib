@@ -12,3 +12,4 @@ mod utils;
 mod fees;
 mod emip3;
 mod pointer;
+mod yoroi_api_compat;

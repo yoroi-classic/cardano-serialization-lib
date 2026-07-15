@@ -1,20 +1,75 @@
 version: 2
 updates:
-- package-ecosystem: cargo
-  directory: "/rust"
-  schedule:
-    interval: monthly
-    timezone: PST8PDT
-  open-pull-requests-limit: 99
-  ignore:
-  - dependency-name: wasm-bindgen
-    versions:
-    - 0.2.69
-    - 0.2.70
-  - dependency-name: cryptoxide
-    versions:
-    - 0.3.0
-  - dependency-name: serde_json
-    versions:
-    - 1.0.61
-  rebase-strategy: disabled
+  - package-ecosystem: cargo
+    directories:
+      - "/rust"
+      - "/rust/bench"
+      - "/rust/json-gen"
+      - "/tools/metadata-cddl-checker"
+    schedule:
+      interval: monthly
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 5
+    groups:
+      cargo-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      cargo-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directories:
+      - "/"
+      - "/example"
+      - "/templates/angular-asmjs"
+      - "/templates/angular-browser"
+      - "/templates/react-asmjs"
+      - "/templates/react-browser"
+    schedule:
+      interval: monthly
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 5
+    groups:
+      npm-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      npm-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: "/doc/.sphinx"
+    schedule:
+      interval: monthly
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 3
+    groups:
+      python-doc-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      python-doc-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 3
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      github-actions-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"

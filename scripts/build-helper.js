@@ -3,10 +3,9 @@
 /**
  * Cardano Serialization Library Build Helper
  * 
- * Supports multiple actions:
+ * Supports local compatibility actions:
  * - build: Build for specific target/variant
- * - publish: Build and publish a single package  
- * - publish-all: Run tests + build and publish ALL packages + publish Rust crate
+ * - test-publish: Dry-run the legacy publishing pipeline
  * 
  * All parameters are REQUIRED - no defaults provided to prevent accidental builds.
  */
@@ -16,10 +15,28 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 
 const program = new Command();
+const legacyPublishDisabledMessage = [
+  'Legacy Yoroi Classic CSL publishing is disabled.',
+  'This fork is superseded by dcSpark cardano-multiplatform-lib.',
+  'Move consumers to @dcspark/cardano-multiplatform-lib-nodejs,',
+  '@dcspark/cardano-multiplatform-lib-browser, or',
+  '@dcspark/cardano-multiplatform-lib-asmjs only when ASM.js is unavoidable.',
+].join('\n');
+
+function stopLegacyPublish() {
+  console.error(`\n${legacyPublishDisabledMessage}`);
+  process.exit(1);
+}
+
+function assertDryRunPublish(dryRun) {
+  if (!dryRun) {
+    throw new Error(legacyPublishDisabledMessage);
+  }
+}
 
 program
   .name('build-helper')
-  .description('Cardano Serialization Library Build Helper\n\nExamples:\n  build-helper build --target browser --variant normal --gc false\n  build-helper publish --target nodejs --variant normal --gc true --env beta\n  build-helper publish-all --env prod')
+  .description('Cardano Serialization Library Build Helper\n\nExamples:\n  build-helper build --target browser --variant normal --gc false\n  build-helper test-publish --env beta')
   .version('1.0.0');
 
 // Build command
@@ -52,49 +69,29 @@ program
 // Publish command  
 program
   .command('publish')
-  .description('Build and publish a single package\n\nExample: publish --target nodejs --variant normal --gc true --env beta')
-  .requiredOption('-t, --target <target>', 'Target platform (nodejs|browser|web)', (value) => {
-    if (!['nodejs', 'browser', 'web'].includes(value)) {
-      throw new Error('Target must be: nodejs, browser, or web');
-    }
-    return value;
-  })
-  .requiredOption('-v, --variant <variant>', 'Build variant (normal|inlined|asm)', (value) => {
-    if (!['normal', 'inlined', 'asm'].includes(value)) {
-      throw new Error('Variant must be: normal, inlined, or asm');
-    }
-    return value;
-  })
-  .requiredOption('-g, --gc <gc>', 'Enable garbage collection (true|false)', (value) => {
-    if (value !== 'true' && value !== 'false') {
-      throw new Error('GC must be: true or false');
-    }
-    return value === 'true';
-  })
-  .requiredOption('-e, --env <env>', 'Environment (prod|beta)', (value) => {
-    if (!['prod', 'beta'].includes(value)) {
-      throw new Error('Environment must be: prod or beta');
-    }
-    return value;
-  })
-  .action((options) => {
-    const config = { target: options.target, variant: options.variant, gc: options.gc };
-    handlePackagePublish(config, options.env, { runTests: true });
-    console.log(`\n✅ Publish completed successfully!`);
+  .description('Deprecated: legacy CSL package publishing is disabled')
+  .allowUnknownOption(true)
+  .allowExcessArguments(true)
+  .action(() => {
+    stopLegacyPublish();
   });
 
 // Publish-all command
 program
   .command('publish-all')
-  .description('Run tests + build and publish ALL packages + publish Rust crate\n\nBuilds all 10 variants: nodejs/browser/web × normal/inlined/asm × gc/no-gc\n\nExample: publish-all --env prod')
-  .requiredOption('-e, --env <env>', 'Environment (prod|beta)', (value) => {
-    if (!['prod', 'beta'].includes(value)) {
-      throw new Error('Environment must be: prod or beta');
-    }
-    return value;
-  })
-  .action((options) => {
-    publishAllPackages(options.env);
+  .description('Deprecated: legacy CSL package publishing is disabled')
+  .allowUnknownOption(true)
+  .allowExcessArguments(true)
+  .action(() => {
+    stopLegacyPublish();
+  });
+
+// Shared disabled command for legacy package scripts that used to publish directly.
+program
+  .command('publish-disabled')
+  .description('Explain why legacy CSL publishing is disabled')
+  .action(() => {
+    stopLegacyPublish();
   });
 
 // Test-publish command
@@ -146,9 +143,10 @@ function buildRust(target, variant, gc) {
   run('npm run js:flowgen', 'Generating Flow types');
 }
 
-function checkVersionExists(packageName, version) {
+function checkVersionExists(packageName, version, registry) {
   try {
-    const result = execSync(`npm view ${packageName}@${version} version 2>/dev/null`, { 
+    const registryArg = registry ? ` --registry=${registry}` : '';
+    const result = execSync(`npm view ${packageName}@${version} version${registryArg} 2>/dev/null`, {
       encoding: 'utf8', 
       stdio: 'pipe' 
     });
@@ -164,7 +162,8 @@ function getPackageInfo(packageJsonPath) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     return {
       name: packageJson.name,
-      version: packageJson.version
+      version: packageJson.version,
+      registry: packageJson.publishConfig?.registry
     };
   } catch (error) {
     console.error(`❌ Failed to read package.json from ${packageJsonPath}`);
@@ -174,6 +173,8 @@ function getPackageInfo(packageJsonPath) {
 
 function handlePackagePublish(config, env, options = {}) {
   const { dryRun = false, runTests = false } = options;
+  assertDryRunPublish(dryRun);
+
   const { target, variant, gc } = config;
   const publishTag = env === 'beta' ? '--tag beta' : '';
   
@@ -202,14 +203,15 @@ function handlePackagePublish(config, env, options = {}) {
   let skipPublish = false;
   const packageInfo = getPackageInfo('./publish/package.json');
   if (packageInfo) {
-    console.log(`\n🔍 Checking if ${packageInfo.name}@${packageInfo.version} already exists...`);
+    const registryLabel = packageInfo.registry || 'default npm registry';
+    console.log(`\n🔍 Checking if ${packageInfo.name}@${packageInfo.version} already exists in ${registryLabel}...`);
     
-    if (checkVersionExists(packageInfo.name, packageInfo.version)) {
+    if (checkVersionExists(packageInfo.name, packageInfo.version, packageInfo.registry)) {
       if (dryRun) {
-        console.log(`\n⚠️  Package ${packageInfo.name}@${packageInfo.version} already exists on npm.`);
+        console.log(`\n⚠️  Package ${packageInfo.name}@${packageInfo.version} already exists in ${registryLabel}.`);
         console.log(`   In a real publish, this would require a version bump.`);
       } else {
-        console.log(`\n⚠️  WARNING: Package ${packageInfo.name}@${packageInfo.version} already exists on npm!`);
+        console.log(`\n⚠️  WARNING: Package ${packageInfo.name}@${packageInfo.version} already exists in ${registryLabel}!`);
         console.log(`   Please bump the version in package.json before publishing.`);
         console.log(`\n❌ Publish will be skipped.`);
         skipPublish = true;
@@ -226,14 +228,14 @@ function handlePackagePublish(config, env, options = {}) {
 
   // Publish or test publish
   if (dryRun) {
-    run(`cd publish && npm publish ${publishTag} --access public --dry-run`, `Testing publish to npm${env === 'beta' ? ' (beta)' : ''} (dry-run)`);
+    run(`cd publish && npm publish ${publishTag} --access public --dry-run`, `Testing package publish${env === 'beta' ? ' (beta)' : ''} (dry-run)`);
     run(`cd publish && npm pack`, 'Creating package tarball');
-  } else {
-    run(`cd publish && npm publish ${publishTag} --access public`, `Publishing to npm${env === 'beta' ? ' (beta)' : ''}`);
   }
 }
 
 function publishAllPackages(env, dryRun = false) {
+  assertDryRunPublish(dryRun);
+
   const workflowType = dryRun ? 'test publish' : 'publish';
   console.log(`\n🚀 Starting full ${workflowType} workflow for ${env} environment...\n`);
   
@@ -282,8 +284,6 @@ function publishAllPackages(env, dryRun = false) {
   try {
     if (dryRun) {
       run('cd rust && cargo publish --dry-run --allow-dirty', 'Testing Rust crate publish (dry-run)');
-    } else {
-      run('cd rust && cargo publish --allow-dirty', 'Publishing Rust crate to crates.io');
     }
     console.log(`✅ Successfully ${dryRun ? 'tested' : 'published'} Rust crate`);
     results.push({ config: 'rust-crate', status: 'success' });
@@ -310,7 +310,7 @@ function publishAllPackages(env, dryRun = false) {
   
   console.log(`\n🎉 Full ${workflowType} workflow completed!`);
   if (dryRun) {
-    console.log(`\n💡 This was a test run. To actually publish, use: build-helper publish-all --env ${env}`);
+    console.log(`\nActual legacy CSL publishing is disabled. Move consumers to dcSpark cardano-multiplatform-lib packages instead.`);
   }
 }
 
@@ -318,5 +318,12 @@ function testPublishAllPackages(env) {
   publishAllPackages(env, true);
 }
 
-// Parse arguments and execute commands
-program.parse(process.argv); 
+if (require.main === module) {
+  program.parse(process.argv);
+}
+
+module.exports = {
+  handlePackagePublish,
+  legacyPublishDisabledMessage,
+  publishAllPackages,
+};

@@ -2,11 +2,11 @@
 name = "cardano-serialization-lib"
 version = "15.0.3"
 edition = "2018"
-authors = ["EMURGO"]
+authors = ["yoroi-classic contributors"]
 license = "MIT"
 description = "(De)serialization functions for the Cardano blockchain along with related utility functions"
 documentation = "https://docs.cardano.org/cardano-components/cardano-serialization-lib"
-repository = "https://github.com/Emurgo/cardano-serialization-lib"
+repository = "https://github.com/yoroi-classic/cardano-serialization-lib"
 readme="../README.md"
 exclude = [
     "pkg/*",
