@@ -113,30 +113,17 @@ Testing
 Publishing
 ----------
 
-To publish a new version to [crates.io](https://crates.io)
-::
+Publishing from this fork is disabled. New work should migrate to dcSpark
+Cardano Multiplatform Lib instead of releasing new
+``@yoroi-classic/cardano-serialization-lib-*`` packages or Rust crates from
+this repository.
 
-   npm run rust:publish
+The legacy release helper exits before doing any work, and the package scripts
+route publish commands through the disabled publishing guard. Keep any already
+pushed Yoroi Classic compatibility refs only as temporary migration bridges.
 
-.. _Crates package: https://crates.io/crates/cardano-serialization-lib
-
-JavaScript packages are not published to npmjs. Generated JavaScript
-package metadata points at GitHub Packages under the ``@yoroi-classic``
-scope. Admins publishing owned packages should authenticate npm to
-``https://npm.pkg.github.com`` and use the owned publish scripts.
-
-To publish all owned JavaScript package variants and the Rust crate:
-::
-
-   npm run publish-all:prod
-
-To publish a single owned JavaScript package variant:
-::
-
-   npm run js:publish-nodejs:prod:no-gc
-   npm run js:publish-browser:prod:no-gc
-   npm run js:publish-browser-inlined:prod:no-gc
-   npm run js:publish-asm:prod:no-gc
+Archive this fork after downstream consumers have completed their CML
+migrations and no temporary compatibility ref is still required.
 
 .. _React-Native mobile bindings: https://github.com/yoroi-classic/csl-mobile-bridge
 .. _Typescript: https://www.typescriptlang.org/
