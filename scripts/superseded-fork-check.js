@@ -60,6 +60,7 @@ assertIncludesAll(
     '@yoroi-classic/cardano-serialization-lib-*',
     'https://github.com/dcSpark/cardano-multiplatform-lib',
     'https://github.com/yoroi-classic/cardano-serialization-lib/issues/3',
+    'https://github.com/yoroi-classic/cardano-serialization-lib/issues/2',
   ],
   'README superseded notice'
 );

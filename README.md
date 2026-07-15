@@ -23,6 +23,7 @@ bridge while downstream consumers migrate. Do not publish new
 `@yoroi-classic/cardano-serialization-lib-*` packages to npm.
 
 Tracking issue: https://github.com/yoroi-classic/cardano-serialization-lib/issues/3
+Prior CSL package-name cleanup: https://github.com/yoroi-classic/cardano-serialization-lib/issues/2
 
 ### Downstream CML migration tracking
 
