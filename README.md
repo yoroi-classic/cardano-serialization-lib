@@ -25,6 +25,13 @@ bridge while downstream consumers migrate. Do not publish new
 Tracking issue: https://github.com/yoroi-classic/cardano-serialization-lib/issues/3
 Prior CSL package-name cleanup: https://github.com/yoroi-classic/cardano-serialization-lib/issues/2
 
+### Archive readiness
+
+Archive this fork after downstream consumers have completed their CML migrations
+and no temporary Yoroi Classic compatibility ref is still required. Until then,
+keep maintenance limited to migration blockers, security/dependency hygiene for
+the bridge, and documentation that helps consumers leave this fork.
+
 ### Downstream CML migration tracking
 
 Use the downstream issues below to move consumers to CML. Avoid adding new
